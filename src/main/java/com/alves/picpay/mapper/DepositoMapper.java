@@ -12,12 +12,12 @@ import java.time.LocalDateTime;
 @UtilityClass
 public class DepositoMapper {
 
-    public Deposito toEntity(DepositoRequest req, TipoDeposito tipoDeposito, Usuario usuario) {
+    public Deposito toEntity(DepositoRequest req, Usuario usuario) {
         Deposito deposito = new Deposito();
         deposito.setNomeAutor(req.nomeAutor());
         deposito.setValorDeposito(req.valorDeposito());
         deposito.setData(LocalDateTime.now());
-        deposito.setTipoDeposito(tipoDeposito);
+        deposito.setTipoDeposito(req.tipoDeposito());
         deposito.setUsuario(usuario);
         return deposito;
     }
