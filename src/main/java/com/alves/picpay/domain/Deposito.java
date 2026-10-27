@@ -12,10 +12,14 @@ public class Deposito {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String UUID;
+    private String id;
 
     @Column(name = "valor_deposito", nullable = false)
     private BigDecimal valorDeposito;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
 
     @Column(nullable = false, name = "nome_autor")
     private String nomeAutor;
@@ -28,12 +32,12 @@ public class Deposito {
     @Column(name = "data_deposito", nullable = false)
     private LocalDateTime data;
 
-    public String getUUID() {
-        return UUID;
+    public String getId() {
+        return id;
     }
 
-    public void setUUID(String UUID) {
-        this.UUID = UUID;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public BigDecimal getValorDeposito() {
@@ -42,6 +46,14 @@ public class Deposito {
 
     public void setValorDeposito(BigDecimal valorDeposito) {
         this.valorDeposito = valorDeposito;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public String getNomeAutor() {
