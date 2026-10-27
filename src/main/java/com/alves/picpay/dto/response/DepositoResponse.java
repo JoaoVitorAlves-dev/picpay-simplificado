@@ -1,4 +1,4 @@
-package com.alves.picpay.dto;
+package com.alves.picpay.dto.response;
 
 import com.alves.picpay.domain.TipoDeposito;
 

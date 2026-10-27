@@ -1,11 +1,11 @@
-package com.alves.picpay.dto;
+package com.alves.picpay.dto.response;
 
 import com.alves.picpay.domain.TipoTransferencia;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public record Transferencia(
+public record TransferenciaResponse(
         String id,
         String usuario,
         BigDecimal valor,
