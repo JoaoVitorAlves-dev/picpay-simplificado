@@ -35,7 +35,10 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
 
-                        .requestMatchers(HttpMethod.POST,"/conta/auth/login", "/conta/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/conta/auth/listar").hasAnyRole("ADMIN", "DESENVOLVEDOR")
+                        .requestMatchers(HttpMethod.POST,"/conta/auth/login", "/conta/auth/register", "/conta/auth/refresh").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/conta/auth/atualizar/{id}").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/conta/auth/apagarPorToken").permitAll()
 
                         .anyRequest().authenticated())
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
