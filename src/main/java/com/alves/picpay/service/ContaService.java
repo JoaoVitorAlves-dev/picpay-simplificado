@@ -4,13 +4,11 @@ import com.alves.picpay.domain.Conta;
 import com.alves.picpay.domain.RefreshToken;
 import com.alves.picpay.domain.RoleUsuario;
 import com.alves.picpay.domain.Usuario;
-import com.alves.picpay.dto.request.ContaRequest;
 import com.alves.picpay.dto.request.LoginRequest;
 import com.alves.picpay.dto.request.RefreshTokenRequest;
 import com.alves.picpay.dto.request.RegisterRequest;
 import com.alves.picpay.dto.response.ContaResponse;
 import com.alves.picpay.dto.response.RefreshTokenResponse;
-import com.alves.picpay.mapper.ContaMapper;
 import com.alves.picpay.repository.ContaRepository;
 import com.alves.picpay.repository.UsuarioRepository;
 import org.springframework.data.domain.Page;
@@ -21,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -43,9 +42,10 @@ public class ContaService {
     }
 
     public Page<ContaResponse> listar(Pageable pageable) {
-        return contaRepository.findAll(pageable).map(ContaMapper::toDTO);
+        return contaRepository.findAllBy(pageable);
     }
 
+    @Transactional
     public RefreshTokenResponse refresh(RefreshTokenRequest req) {
         RefreshToken refreshToken = tokenRefreshService.validarERotacionar(req.accessToken());
 
@@ -54,20 +54,29 @@ public class ContaService {
         return new RefreshTokenResponse(token, refreshToken.getToken());
     }
 
-    public void criar(RegisterRequest registerRequest, ContaRequest req) {
-        if (usuarioRepository.existsById(req.usuarioId()) || usuarioRepository.existsByUsername(registerRequest.username())) {
+    @Transactional
+    public void criar(RegisterRequest req) {
+        if (contaRepository.existsByCpf(req.cpf()) || contaRepository.existsByTelefone(req.telefone())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 
         Usuario usuario = new Usuario();
-        usuario.setUsername(registerRequest.username());
-        usuario.setPassword(passwordEncoder.encode(registerRequest.password()));
+        usuario.setUsername(req.username());
+        usuario.setPassword(passwordEncoder.encode(req.password()));
         usuario.setRoleUsuario(RoleUsuario.COMUM);
+
         usuarioRepository.save(usuario);
-        Conta entity = ContaMapper.toEntity(req, usuario);
-        contaRepository.save(entity);
+
+        Conta conta = new Conta();
+        conta.setUsuario(usuario);
+        conta.setCpf(req.cpf());
+        conta.setEmail(req.email());
+        conta.setTelefone(req.telefone());
+        conta.setDataNascimento(req.dataNascimento());
+        contaRepository.save(conta);
     }
 
+    @Transactional
     public RefreshTokenResponse login(LoginRequest req) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(req.username(), req.password()));
 
@@ -80,6 +89,7 @@ public class ContaService {
         return new RefreshTokenResponse(accessToken, refresh);
     }
 
+    @Transactional
     public void atualizar(Long id, LoginRequest login, Authentication auth) {
         Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         if (!usuario.getUsername().equalsIgnoreCase(auth.getName())) {
@@ -95,6 +105,7 @@ public class ContaService {
         usuarioRepository.save(usuario);
     }
 
+    @Transactional
     public void apagarPorToken(RefreshTokenRequest tokenRequest) {
         tokenRefreshService.deletarPorToken(tokenRequest.accessToken());
     }

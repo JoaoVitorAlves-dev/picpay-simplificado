@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
 
-                        .requestMatchers(HttpMethod.POST,"/auth/login", "/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/conta/auth/login", "/conta/auth/register").permitAll()
 
                         .anyRequest().authenticated())
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
