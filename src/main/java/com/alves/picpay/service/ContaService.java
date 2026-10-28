@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -77,6 +78,25 @@ public class ContaService {
         String refresh = tokenRefreshService.validarERotacionar(accessToken).getToken();
         
         return new RefreshTokenResponse(accessToken, refresh);
+    }
+
+    public void atualizar(Long id, LoginRequest login, Authentication auth) {
+        Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        if (!usuario.getUsername().equalsIgnoreCase(auth.getName())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+        if (usuarioRepository.existsByUsername(login.username())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
+
+        usuario.setUsername(login.username());
+        usuario.setPassword(passwordEncoder.encode(login.password()));
+
+        usuarioRepository.save(usuario);
+    }
+
+    public void apagarPorToken(RefreshTokenRequest tokenRequest) {
+        tokenRefreshService.deletarPorToken(tokenRequest.accessToken());
     }
 
 }
