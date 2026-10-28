@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -35,6 +36,9 @@ public class Conta {
 
     @Column(nullable = false)
     private String cpf;
+
+    @Column(name = "data_nascimento", nullable = false)
+    private LocalDate dataNascimento;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -101,6 +105,14 @@ public class Conta {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
     }
 
     public LocalDateTime getCreatedAt() {
