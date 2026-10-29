@@ -25,7 +25,7 @@ public class Conta {
     private Usuario usuario;
 
     @Column(nullable = false)
-    private BigDecimal saldo;
+    private BigDecimal saldo = BigDecimal.ZERO;
 
     @Email
     @Column(nullable = false)

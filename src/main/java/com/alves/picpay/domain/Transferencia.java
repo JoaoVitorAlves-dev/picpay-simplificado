@@ -19,7 +19,7 @@ public class Transferencia {
     private Usuario usuario;
 
     @Column(nullable = false, name = "valor_transferencia")
-    private BigDecimal valor;
+    private BigDecimal valor = BigDecimal.ZERO;
 
     @Column(name = "nome_autor", nullable = false)
     private String nomeAutor;

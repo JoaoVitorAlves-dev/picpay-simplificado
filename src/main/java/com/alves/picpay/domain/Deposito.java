@@ -15,7 +15,7 @@ public class Deposito {
     private String id;
 
     @Column(name = "valor_deposito", nullable = false)
-    private BigDecimal valorDeposito;
+    private BigDecimal valorDeposito = BigDecimal.ZERO;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_id", nullable = false)
