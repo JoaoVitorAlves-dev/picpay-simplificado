@@ -35,6 +35,9 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
 
+                        .requestMatchers(HttpMethod.GET, "/transferencia/listar").hasAnyRole("ADMIN", "DESENVOLVEDOR")
+                        .requestMatchers(HttpMethod.POST, "/transferencia/transferir").authenticated()
+
                         .requestMatchers(HttpMethod.GET, "/conta/auth/listar").hasAnyRole("ADMIN", "DESENVOLVEDOR")
                         .requestMatchers(HttpMethod.POST,"/conta/auth/login", "/conta/auth/register", "/conta/auth/refresh").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/conta/auth/atualizar/{id}").authenticated()
