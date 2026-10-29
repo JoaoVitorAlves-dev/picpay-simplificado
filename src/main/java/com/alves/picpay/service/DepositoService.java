@@ -14,7 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Service
@@ -55,6 +54,7 @@ public class DepositoService {
         deposito1.setValorDeposito(deposito.valor());
         deposito1.setNomeAutor(contaLogada.getNomeUsuario());
         deposito1.setData(LocalDateTime.now());
+        deposito1.setTipoDeposito(deposito.tipoDeposito());
 
         contaDeposito.setSaldo(contaDeposito.getSaldo().add(deposito.valor()));
         contaRepository.save(contaDeposito);

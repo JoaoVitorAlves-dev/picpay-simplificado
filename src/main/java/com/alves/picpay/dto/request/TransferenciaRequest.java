@@ -1,15 +1,16 @@
 package com.alves.picpay.dto.request;
 
 import com.alves.picpay.domain.TipoTransferencia;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record TransferenciaRequest(
-        Long usuarioId,
-        BigDecimal valorTransferencia,
-        String nomeAutor,
-        TipoTransferencia tipoTransferencia,
-        LocalDateTime dataTransferencia
+        @NotBlank String cpf,
+        @NotNull @Positive BigDecimal valorTransferencia,
+        @NotNull TipoTransferencia tipoTransferencia
 ) {
 }

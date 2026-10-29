@@ -1,9 +1,7 @@
 package com.alves.picpay.mapper;
 
 import com.alves.picpay.domain.Deposito;
-import com.alves.picpay.domain.TipoDeposito;
 import com.alves.picpay.domain.Usuario;
-import com.alves.picpay.dto.request.DepositoRequest;
 import com.alves.picpay.dto.response.DepositoResponse;
 import lombok.experimental.UtilityClass;
 

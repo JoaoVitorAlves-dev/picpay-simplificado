@@ -40,6 +40,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/conta/auth/atualizar/{id}").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/conta/auth/apagarPorToken").permitAll()
 
+                        .requestMatchers(HttpMethod.GET, "/deposito/listar").hasAnyRole("ADMIN", "DESENVOLVEDOR")
+                        .requestMatchers(HttpMethod.POST, "/deposito/depositar").authenticated()
+
                         .anyRequest().authenticated())
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
