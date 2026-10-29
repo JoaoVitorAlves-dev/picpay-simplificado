@@ -32,19 +32,19 @@ public class DepositoService {
         return depositoRepository.findAll(pageable).map(DepositoMapper::toDTO);
     }
 
-    public DepositoResponse depositar(DepositoTypeRequest deposito, BigDecimal valor, Authentication auth) {
+    public DepositoResponse depositar(DepositoTypeRequest deposito, Authentication auth) {
         Conta contaDeposito = contaRepository.findByCpf(deposito.cpf())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         Conta contaLogada = contaRepository.findByNomeUsuario(auth.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
-        if (contaLogada.getSaldo().compareTo(valor) < 0) {
+        if (contaLogada.getSaldo().compareTo(deposito.valor()) < 0) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
-        if (contaLogada.getSaldo().compareTo(valor) >= 0) {
-            contaLogada.setSaldo(contaLogada.getSaldo().subtract(valor));
+        if (contaLogada.getSaldo().compareTo(deposito.valor()) >= 0) {
+            contaLogada.setSaldo(contaLogada.getSaldo().subtract(deposito.valor()));
         } else {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
@@ -52,11 +52,11 @@ public class DepositoService {
         Deposito deposito1 = new Deposito();
         deposito1.setUsuario(contaDeposito.getUsuario());
         deposito1.setTipoDeposito(deposito.tipoDeposito());
-        deposito1.setValorDeposito(valor);
+        deposito1.setValorDeposito(deposito.valor());
         deposito1.setNomeAutor(contaLogada.getNomeUsuario());
         deposito1.setData(LocalDateTime.now());
 
-        contaDeposito.setSaldo(valor);
+        contaDeposito.setSaldo(contaDeposito.getSaldo().add(deposito.valor()));
         contaRepository.save(contaDeposito);
         contaRepository.save(contaLogada);
 
