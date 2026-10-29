@@ -22,4 +22,5 @@ public interface ContaRepository extends JpaRepository<Conta, String> {
 
     Boolean existsByTelefone(String cpf);
 
+    Optional<Conta> findByCpf(String cpf);
 }

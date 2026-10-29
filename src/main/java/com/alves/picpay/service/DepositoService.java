@@ -1,0 +1,54 @@
+package com.alves.picpay.service;
+
+import com.alves.picpay.domain.Conta;
+import com.alves.picpay.dto.response.DepositoResponse;
+import com.alves.picpay.mapper.DepositoMapper;
+import com.alves.picpay.repository.ContaRepository;
+import com.alves.picpay.repository.DepositoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.math.BigDecimal;
+
+@Service
+public class DepositoService {
+
+    private final DepositoRepository depositoRepository;
+    private final ContaRepository contaRepository;
+
+    public DepositoService(DepositoRepository depositoRepository, ContaRepository contaRepository) {
+        this.depositoRepository = depositoRepository;
+        this.contaRepository = contaRepository;
+    }
+
+    public Page<DepositoResponse> listar(Pageable pageable) {
+        return depositoRepository.findAll(pageable).map(DepositoMapper::toDTO);
+    }
+
+    public void depositar(String cpf, BigDecimal valor, Authentication auth) {
+        Conta contaDeposito = contaRepository.findByCpf(cpf)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        Conta contaLogada = contaRepository.findByNomeUsuario(auth.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+
+        if (contaLogada.getSaldo().compareTo(valor) < 0) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        if (contaLogada.getSaldo().compareTo(valor) >= 0) {
+            contaLogada.setSaldo(contaLogada.getSaldo().subtract(valor));
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        contaDeposito.setSaldo(valor);
+        contaRepository.save(contaDeposito);
+        contaRepository.save(contaLogada);
+    }
+
+}
