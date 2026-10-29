@@ -30,15 +30,21 @@ public class TokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
-        String token = extrairToken(request);
+        try {
+            String token = extrairToken(request);
 
-        if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            String username = tokenService.validarToken(token);
-            UserDetails usuario = usuarioDetailsService.loadUserByUsername(username);
+            if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                String username = tokenService.validarToken(token);
+                UserDetails usuario = usuarioDetailsService.loadUserByUsername(username);
 
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
         }
+
+
         filterChain.doFilter(request, response);
     }
 

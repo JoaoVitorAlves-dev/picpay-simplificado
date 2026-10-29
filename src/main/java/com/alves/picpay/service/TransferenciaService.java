@@ -55,6 +55,7 @@ public class TransferenciaService {
         contaRepository.save(contaLogada);
 
         Transferencia transferencia = new Transferencia();
+        transferencia.setNomeAutor(contaLogada.getNomeUsuario());
         transferencia.setUsuario(contaTransferencia.getUsuario());
         transferencia.setValor(request.valorTransferencia());
         transferencia.setTipoTransferencia(request.tipoTransferencia());

@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 public record DepositoTypeRequest(
+        @NotBlank String nomeAutor,
         @NotBlank String cpf,
         @NotNull TipoDeposito tipoDeposito,
         @NotNull @Positive BigDecimal valor

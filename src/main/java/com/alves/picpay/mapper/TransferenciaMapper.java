@@ -13,7 +13,6 @@ public class TransferenciaMapper {
 
     public Transferencia toEntity(TransferenciaRequest req, Usuario usuario) {
         Transferencia transferencia = new Transferencia();
-        transferencia.setNomeAutor(req.nomeAutor());
         transferencia.setDataTransferencia(LocalDateTime.now());
         transferencia.setTipoTransferencia(req.tipoTransferencia());
         transferencia.setValor(req.valorTransferencia());

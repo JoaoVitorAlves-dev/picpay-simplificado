@@ -80,11 +80,10 @@ public class ContaService {
     public RefreshTokenResponse login(LoginRequest req) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(req.username(), req.password()));
 
-        Usuario usuario = usuarioRepository.findByUsername(req.username())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Usuario usuario = usuarioRepository.findByUsername(req.username()).orElseThrow();
 
         String accessToken = tokenService.gerarToken(usuario.getUsername());
-        String refresh = tokenRefreshService.validarERotacionar(accessToken).getToken();
+        String refresh = tokenRefreshService.criar(usuario).getToken();
         
         return new RefreshTokenResponse(accessToken, refresh);
     }

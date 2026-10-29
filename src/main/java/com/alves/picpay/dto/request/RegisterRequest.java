@@ -12,8 +12,6 @@ public record RegisterRequest(
         @NotBlank @Email String email,
         @NotBlank String telefone,
         @NotBlank String cpf,
-        @NotBlank LocalDate dataNascimento
-
-
+        @NotNull LocalDate dataNascimento
 ) {
 }
