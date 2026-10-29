@@ -9,10 +9,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record DepositoRequest(
-        @NotNull BigDecimal valorDeposito,
+        @NotNull @Positive BigDecimal valorDeposito,
         @NotNull Long usuarioId,
         @NotBlank String nomeAutor,
-        @NotNull @Positive TipoDeposito tipoDeposito,
+        @NotNull TipoDeposito tipoDeposito,
         @NotNull LocalDateTime data
 ) {
 }

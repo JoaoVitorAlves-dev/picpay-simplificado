@@ -1,6 +1,8 @@
 package com.alves.picpay.service;
 
 import com.alves.picpay.domain.Conta;
+import com.alves.picpay.domain.Deposito;
+import com.alves.picpay.dto.request.DepositoTypeRequest;
 import com.alves.picpay.dto.response.DepositoResponse;
 import com.alves.picpay.mapper.DepositoMapper;
 import com.alves.picpay.repository.ContaRepository;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Service
 public class DepositoService {
@@ -29,8 +32,8 @@ public class DepositoService {
         return depositoRepository.findAll(pageable).map(DepositoMapper::toDTO);
     }
 
-    public void depositar(String cpf, BigDecimal valor, Authentication auth) {
-        Conta contaDeposito = contaRepository.findByCpf(cpf)
+    public DepositoResponse depositar(DepositoTypeRequest deposito, BigDecimal valor, Authentication auth) {
+        Conta contaDeposito = contaRepository.findByCpf(deposito.cpf())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         Conta contaLogada = contaRepository.findByNomeUsuario(auth.getName())
@@ -46,9 +49,18 @@ public class DepositoService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
+        Deposito deposito1 = new Deposito();
+        deposito1.setUsuario(contaDeposito.getUsuario());
+        deposito1.setTipoDeposito(deposito.tipoDeposito());
+        deposito1.setValorDeposito(valor);
+        deposito1.setNomeAutor(contaLogada.getNomeUsuario());
+        deposito1.setData(LocalDateTime.now());
+
         contaDeposito.setSaldo(valor);
         contaRepository.save(contaDeposito);
         contaRepository.save(contaLogada);
+
+        return DepositoMapper.toDTO(depositoRepository.save(deposito1));
     }
 
 }
